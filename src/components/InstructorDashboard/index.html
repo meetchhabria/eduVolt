@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Instructor Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #333;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+    }
+
+    nav {
+      background-color: #f4f4f4;
+      padding: 10px;
+      text-align: center;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #333;
+      padding: 10px 20px;
+      border: 1px solid #ccc;
+      margin: 0 5px;
+    }
+
+    section {
+      padding: 20px;
+      margin: 20px;
+      border: 1px solid #ccc;
+    }
+
+    .overview {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f4f4f4;
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .pagination a {
+      text-decoration: none;
+      color: #333;
+      padding: 8px 16px;
+      border: 1px solid #ccc;
+      margin: 0 4px;
+      transition: background-color 0.3s;
+    }
+
+    .pagination a:hover {
+      background-color: #f4f4f4;
+    }
+
+    .pagination a.active {
+      background-color: #333;
+      color: #fff;
+      border-color: #333;
+    }
+    .edit-form {
+      display: none;
+      margin-top: 20px;
+    }
+
+    .edit-form label {
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .edit-form input[type="text"] {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+      box-sizing: border-box;
+    }
+
+    .edit-form input[type="submit"] {
+      padding: 10px 20px;
+      background-color: #333;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Instructor Dashboard</h1>
+  </header>
+  <nav>
+    <a href="#" onclick="showSection('overview')">Dashboard Overview</a>
+    <a href="#" onclick="showSection('course-management')">Course Management</a>
+    <a href="#" onclick="showSection('earnings-dashboard')">Earnings Dashboard</a>
+    <a href="#" onclick="showSection('payment-settings')">Payment Settings</a>
+  </nav>
+  <section id="overview" class="overview">
+    <h2>Dashboard Overview</h2>
+    <div id="enrolledStudentsCount"></div>
+    <table id="analyticsTable">
+      <thead>
+        <tr>
+          <th>Student Name</th>
+          <th>Percentage Completed</th>
+          <th>Rating</th>
+          <th>Feedback</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Data will be dynamically added here -->
+      </tbody>
+    </table>
+    <div class="pagination">
+      <!-- Pagination links will go here -->
+    </div>
+  </section>
+  <section id="course-management">
+    <h2>Course Management</h2>
+    <!-- Course management content here -->
+    <p>Manage Course Content and Quizzes</p>
+    <div id="videoLinks">
+      <h3>Video Links</h3>
+      <ul id="videoList">
+        <!-- Video links will be dynamically added here -->
+      </ul>
+      <button onclick="showEditForm('video')">Edit Video Links</button>
+      <div id="videoEditForm" class="edit-form">
+        <form onsubmit="saveVideoLinks(); return false;">
+          <label for="videoLink1">Video Link 1:</label>
+          <input type="text" id="videoLink1" name="videoLink1">
+          <label for="videoLink2">Video Link 2:</label>
+          <input  type="text" id="videoLink2" name="videoLink2">
+          <input type="submit" value="Save">
+        </form>
+      </div>
+    </div>
+    <div id="quizLinks">
+      <h3>Quiz Links</h3>
+      <ul id="quizList">
+        <!-- Quiz links will be dynamically added here -->
+      </ul>
+      <button onclick="showEditForm('quiz')">Edit Quiz Links</button>
+      <div id="quizEditForm" class="edit-form">
+        <form onsubmit="saveQuizLinks(); return false;">
+          <label for="quizLink1">Quiz Link 1:</label>
+          <input type="text" id="quizLink1" name="quizLink1">
+          <label for="quizLink2">Quiz Link 2:</label>
+          <input type="text" id="quizLink2" name="quizLink2">
+          <input type="submit" value="Save">
+        </form>
+      </div>
+    </div>
+  </section>
+  <section id="earnings-dashboard">
+    <h2>Earnings Dashboard</h2>
+    <!-- Earnings dashboard content here -->
+    <!-- <table id="earningsTable">
+      <thead>
+        <tr>
+          <th>Course Name</th>
+          <th>Total Earnings</th>
+          <th>Enrolled Students</th>
+          <th>Course Rating</th>
+        </tr>
+      </thead>
+      <tbody> -->
+        <!-- Data will be dynamically added here -->
+      <!-- </tbody>
+    </table> -->
+    <div id="courseInfo"></div>
+    </section>
+  <section id="payment-settings">
+    <h2>Payment Settings</h2>
+    <!-- Payment settings content here -->
+    <p>Manage Payment Information</p>
+  </section>
+
+  <script>
+    function showSection(sectionId) {
+        const sections = document.querySelectorAll('section');
+        sections.forEach(section => {
+            section.style.display = 'none';
+        });
+        document.getElementById(sectionId).style.display = 'block';
+    }
+
+    function showEditForm(type) {
+        const editForm = document.getElementById(type + 'EditForm');
+        if (editForm) {
+            editForm.style.display = 'block';
+
+            // Retrieve existing links from JSON file and populate input fields
+            fetch('course_management_data.json')
+                .then(response => response.json())
+                .then(data => {
+                    const links = data[type + 'Links'];
+                    if (links && links.length > 0) {
+                        links.forEach((link, index) => {
+                            const inputField = document.getElementById(type + 'Link' + (index + 1));
+                            if (inputField) {
+                                inputField.value = link;
+                            }
+                        });
+                    }
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+    }
+
+    function saveVideoLinks() {
+        // Add your logic to save edited video links here
+        console.log('Video links saved');
+    }
+
+    function saveQuizLinks() {
+        // Add your logic to save edited quiz links here
+        console.log('Quiz links saved');
+    }
+
+    fetch('course_analytics.json')
+        .then(response => response.json())
+        .then(data => {
+            const tableBody = document.querySelector('#analyticsTable tbody');
+            const pagination = document.querySelector('.pagination');
+            const enrolledStudentsCount = data.length;
+            document.getElementById('enrolledStudentsCount').textContent = `Total Enrolled Students: ${enrolledStudentsCount}`;
+
+            const pageSize = 10;
+            const numPages = Math.ceil(data.length / pageSize);
+
+            function showPage(page) {
+                tableBody.innerHTML = '';
+                for (let i = (page - 1) * pageSize; i < page * pageSize && i < data.length; i++) {
+                    const student = data[i];
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+              <td>${student.student_name}</td>
+              <td>${student.percentage_completed}%</td>
+              <td>${student.rating}</td>
+              <td>${student.feedback}</td>
+            `;
+                    tableBody.appendChild(row);
+                }
+            }
+
+            function createPagination() {
+                pagination.innerHTML = '';
+                for (let i = 1; i <= numPages; i++) {
+                    const link = document.createElement('a');
+                    link.href = '#';
+                    link.textContent = i;
+                    link.addEventListener('click', () => {
+                        showPage(i);
+                        const activeLink = document.querySelector('.pagination a.active');
+                        if (activeLink) {
+                            activeLink.classList.remove('active');
+                        }
+                        link.classList.add('active');
+                    });
+                    pagination.appendChild(link);
+                }
+            }
+
+            showPage(1);
+            createPagination();
+        })
+        .catch(error => console.error('Error fetching data:', error));
+
+    // Fetch and display earnings dashboard data
+    document.addEventListener('DOMContentLoaded', function () {
+    fetch('earnings_data.json')
+        .then(response => response.json())
+        .then(data => {
+            const courseInfoDiv = document.getElementById('courseInfo');
+            let html = '';
+            html += '<table>';
+            html += '<tr><th>Course Name</th><th>Total Earnings</th><th>Enrolled Students</th><th>Course Rating</th></tr>';
+            data.forEach(course => {
+                html += `<tr><td>${course.course_name}</td><td>${course.total_earnings}</td><td>${course.enrolled_students}</td><td>${course.course_rating}</td></tr>`;
+                console.log(course);
+            });
+            html += '</table>';
+            courseInfoDiv.innerHTML = html;
+        })
+        .catch(error => console.error('Error fetching data:', error));
+    });
+
+  </script>
+</body>
+</html>
+
+       
+

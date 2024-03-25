@@ -1,0 +1,11 @@
+{
+    "videoLinks": {
+      "link1": "https://example.com/video1",
+      "link2": "https://example.com/video2"
+    },
+    "quizLinks": {
+      "link1": "https://example.com/quiz1",
+      "link2": "https://example.com/quiz2"
+    }
+  }
+  

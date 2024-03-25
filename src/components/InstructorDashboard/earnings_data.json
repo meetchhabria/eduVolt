@@ -1,0 +1,21 @@
+[
+    {
+      "course_name": "Course A",
+      "total_earnings": 5000,
+      "enrolled_students": 50,
+      "course_rating": 4.5
+    },
+    {
+      "course_name": "Course B",
+      "total_earnings": 7000,
+      "enrolled_students": 60,
+      "course_rating": 4.2
+    },
+    {
+        "course_name": "Graphic Design Fundamentals",
+        "total_earnings": 8000,
+        "enrolled_students": 40,
+        "course_rating": 4.3
+      }
+]
+  
