@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate and Upload Certificate</title>
+</head>
+<body>
+    <h1>Generate and Upload Certificate</h1>
+    <form id="certificateForm">
+        <label for="studentName">Your Name:</label>
+        <input type="text" id="studentName" required><br><br>
+        
+        <label for="courseTitle">Course Title:</label>
+        <input type="text" id="courseTitle" required><br><br>
+        
+        <button type="submit">Generate and Upload Certificate</button>
+    </form>
+
+    <div id="uploadMessage"></div>
+
+    <script src="arweaveUpload.js"></script>
+    <script>
+        document.getElementById('certificateForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            // Get user inputs
+            const studentName = document.getElementById('studentName').value;
+            const courseTitle = document.getElementById('courseTitle').value;
+
+            try {
+                // Generate certificate HTML with user inputs
+                const certificateHTML = generateCertificateHTML(studentName, courseTitle);
+
+                // Convert certificate HTML to Blob
+                const certificateBlob = new Blob([certificateHTML], { type: 'text/html' });
+
+                // Upload certificate to Arweave
+                const transactionId = await uploadCertificateBlob(certificateBlob);
+                
+                // Display success message
+                document.getElementById('uploadMessage').textContent = `Certificate uploaded successfully. Transaction ID: ${transactionId}`;
+            } catch (error) {
+                // Display error message
+                document.getElementById('uploadMessage').textContent = 'Error uploading certificate. Please try again.';
+                console.error('Upload error:', error);
+            }
+        });
+
+        // Function to generate certificate HTML based on user inputs
+        function generateCertificateHTML(studentName, courseTitle) {
+            return `
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Certificate of Completion</title>
+                    <style>
+                        /* Certificate styling */
+                        /* Add styling for certificate elements here */
+                    </style>
+                </head>
+                <body>
+                    <h1>Certificate of Completion</h1>
+                    <p>This certifies that <span>${studentName}</span> has successfully completed the course titled <span>${courseTitle}</span> on <span>${new Date().toLocaleDateString()}</span>.</p>
+                    <!-- Other static and dynamic content -->
+                </body>
+                </html>
+            `;
+        }
+
+        // Function to upload certificate blob to Arweave
+        async function uploadCertificateBlob(blob) {
+            const fileData = new Uint8Array(await blob.arrayBuffer());
+            const transaction = await arweave.createTransaction({ data: fileData });
+            transaction.addTag('Content-Type', 'text/html');
+            await arweave.transactions.sign(transaction);
+            const response = await arweave.transactions.post(transaction);
+            return transaction.id;
+        }
+    </script>
+</body>
+</html>
